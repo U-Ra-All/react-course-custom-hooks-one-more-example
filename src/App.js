@@ -7,26 +7,7 @@ import useHttp from "./hooks/use-http";
 function App() {
   const [products, setProducts] = useState([]);
 
-  const manageProducts = (productsData) => {
-    const loadedProducts = [];
-
-    for (const productKey in productsData) {
-      loadedProducts.push({
-        id: productKey,
-        text: productsData[productKey].text,
-      });
-    }
-
-    setProducts(loadedProducts);
-  };
-
-  const httpRequestData = useHttp(
-    {
-      endpoint:
-        "https://react-course-http-8220d-default-rtdb.firebaseio.com/products.json",
-    },
-    manageProducts
-  );
+  const httpRequestData = useHttp();
 
   const { isLoading, error, sendHttpRequest: fetchProducts } = httpRequestData;
 
@@ -58,8 +39,27 @@ function App() {
   // };
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    const manageProducts = (productsData) => {
+      const loadedProducts = [];
+
+      for (const productKey in productsData) {
+        loadedProducts.push({
+          id: productKey,
+          text: productsData[productKey].text,
+        });
+      }
+
+      setProducts(loadedProducts);
+    };
+
+    fetchProducts(
+      {
+        endpoint:
+          "https://react-course-http-8220d-default-rtdb.firebaseio.com/products.json",
+      },
+      manageProducts
+    );
+  }, [fetchProducts]);
 
   const productAddHandler = (product) => {
     setProducts((prevProducts) => prevProducts.concat(product));
